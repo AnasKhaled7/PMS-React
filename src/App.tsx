@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { ToastContainer } from "react-toastify";
 import ChangePass from "./AuthModule/components/ChangePass/ChangePass";
 import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
@@ -12,12 +14,32 @@ import MasterLayout from "./SharedModule/components/MasterLayout/MasterLayout";
 import NotFound from "./SharedModule/components/NotFound/NotFound";
 import TasksList from "./TasksModule/components/TasksList/TasksList";
 import UserList from "./UserModule/components/UserList/UserList";
+import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 
 export default function App() {
+  const [userData, setUserData] = useState(null);
+
+  const saveUserData = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setUserData(decodedToken);
+    }
+  };
+
+  useEffect(() => {
+    saveUserData();
+  }, []);
+
   const routes = createBrowserRouter([
     {
       path: "/dashboard",
-      element: <MasterLayout />,
+      element: (
+        <ProtectedRoute>
+          <MasterLayout />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> },
@@ -31,8 +53,8 @@ export default function App() {
       path: "/",
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login /> },
-        { path: "login", element: <Login /> },
+        { index: true, element: <Login saveUserData={saveUserData} /> },
+        { path: "login", element: <Login saveUserData={saveUserData} /> },
         { path: "forgot-pass", element: <ForgotPass /> },
         { path: "reset-pass", element: <ResetPass /> },
         { path: "register", element: <Register /> },

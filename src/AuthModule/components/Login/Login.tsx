@@ -6,7 +6,11 @@ import axios from "axios";
 import style from "./Login.module.css";
 import logo from "../../../assets/images/PMS3.png";
 
-export default function Login() {
+type Props = {
+  saveUserData: () => void;
+};
+
+export default function Login({ saveUserData }: Props) {
   const navigate = useNavigate();
 
   const [showPass, setShowPass] = useState(false);
@@ -25,10 +29,12 @@ export default function Login() {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.post(
+      const result = await axios.post(
         "https://upskilling-egypt.com:3003/api/v1/Users/Login",
         data
       );
+      localStorage.setItem("token", result?.data?.token);
+      saveUserData();
       toast.success("Logged in successfully");
       navigate("/dashboard");
     } catch (error: any) {
