@@ -1,21 +1,18 @@
-import style from "./Login.module.css";
-import logo from "../../../assets/images/PMS3.png";
-import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useForm, FieldError } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import style from "./Login.module.css";
+import logo from "../../../assets/images/PMS3.png";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [showPass, setShowPass] = useState(false);
+  const showPassHandler = () => setShowPass(!showPass);
 
-  let navigate = useNavigate();
-
-  const showPassHandler = () => {
-    setShowPass(!showPass);
-  };
-
-  type FormData = {
+  type Inputs = {
     email: string;
     password: string;
   };
@@ -24,41 +21,25 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>();
+  } = useForm<Inputs>();
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: Inputs) => {
     try {
-      let req = await axios.post(
+      await axios.post(
         "https://upskilling-egypt.com:3003/api/v1/Users/Login",
         data
       );
-      console.log(req);
+      toast.success("Logged in successfully");
       navigate("/dashboard");
-      setTimeout(() => {
-        toast.success("You have successfully logged in. Welcome!", {
-          position: "top-right",
-        }),
-          100;
-      });
-    } catch (error) {
-      console.log(error);
-      if ((error as any)?.response) {
-        toast.error((error as any)?.response?.data?.message, {
-          position: "top-right",
-        });
-      } else {
-        toast.error("An error occurred", {
-          position: "top-right",
-        });
-      }
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "An error occurred");
     }
   };
 
   return (
-    <div className={`vh-100 ${style["auth-container"]}`}>
-      <div className="container">
-        <ToastContainer></ToastContainer>
-        <div className="row vh-100 justify-content-center align-items-center">
+    <div className={`${style["auth-container"]}`}>
+      <div className="container-fluid py-4">
+        <div className="row justify-content-center align-items-center">
           <div className="col-md-7">
             <div className="logo text-center mb-2">
               <img src={logo} alt="Logo" />
@@ -68,16 +49,18 @@ export default function Login() {
                 <p className="lh-1 form-title">welcome to PMS</p>
                 <h2 className="form-header lh-1">Login</h2>
               </div>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <label htmlFor="email" className="form-label">
+              <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                {/* email input */}
+                <label htmlFor="email" className="form-label mb-0">
                   Email
                 </label>
                 <div className="input-group mb-4">
                   <input
                     id="email"
                     type="email"
-                    className="form-control bg-transparent border-0 border-bottom rounded-0 p-0 shadow-none text-light"
+                    className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your E-mail"
+                    autoComplete="email"
                     {...register("email", {
                       required: "Email is required",
                       pattern: {
@@ -95,15 +78,18 @@ export default function Login() {
                     </span>
                   )}
                 </div>
-                <label htmlFor="password" className="form-label">
+
+                {/* password input */}
+                <label htmlFor="password" className="form-label mb-0">
                   Password
                 </label>
                 <div className="input-group mb-4">
                   <input
                     id="password"
                     type={showPass ? "text" : "password"}
-                    className="form-control bg-transparent border-0 border-bottom rounded-0 p-0 shadow-none text-light"
+                    className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your password"
+                    autoComplete="current-password"
                     {...register("password", {
                       required: "Password is required",
                       pattern: {
@@ -114,19 +100,13 @@ export default function Login() {
                     })}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
-                    {showPass ? (
-                      <i
-                        className="fa-regular fa-eye text-light"
-                        role="button"
-                        onClick={showPassHandler}
-                      ></i>
-                    ) : (
-                      <i
-                        className="fa-regular fa-eye-slash text-light"
-                        role="button"
-                        onClick={showPassHandler}
-                      ></i>
-                    )}
+                    <i
+                      className={`fa-regular text-light fa-eye${
+                        showPass ? "-slash" : ""
+                      }`}
+                      role="button"
+                      onClick={showPassHandler}
+                    ></i>
                   </span>
                 </div>
                 <div className="w-100">
@@ -136,37 +116,39 @@ export default function Login() {
                     </span>
                   )}
                 </div>
+
+                {/* links */}
                 <div className="d-flex justify-content-between">
                   <Link
-                    to={"register"}
+                    to="/register"
                     className="text-decoration-none text-light"
                   >
                     Register Now ?
                   </Link>
                   <Link
-                    to={"forgot-pass"}
+                    to="/forgot-pass"
                     className="text-decoration-none text-light"
                   >
                     Forget Password ?
                   </Link>
                 </div>
-                <div className="text-center mt-4">
-                  <button
-                    disabled={isSubmitting}
-                    type="submit"
-                    className="btn form-btn w-75 rounded-4 text-light"
-                  >
-                    {isSubmitting ? (
-                      <span
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
-                    ) : (
-                      "Login"
-                    )}
-                  </button>
-                </div>
+
+                {/* submit button */}
+                <button
+                  disabled={isSubmitting}
+                  type="submit"
+                  className="btn form-btn w-75 rounded-4 text-light mt-4 mx-auto d-block"
+                >
+                  {isSubmitting ? (
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  ) : (
+                    "Login"
+                  )}
+                </button>
               </form>
             </div>
           </div>

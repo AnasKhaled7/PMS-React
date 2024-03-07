@@ -1,24 +1,23 @@
-import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
-import Home from "./HomeModule/components/Home/Home";
-import NotFound from "./SharedModule/components/NotFound/NotFound";
-import AuthLayout from "./SharedModule/components/AuthLayout/AuthLayout";
-import Login from "./AuthModule/components/Login/Login";
-import ResetPass from "./AuthModule/components/ResetPass/ResetPass";
-import Register from "./AuthModule/components/Register/Register";
-import VerifyAccount from "./AuthModule/components/VerifyAccount/VerifyAccount";
-import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
+import { ToastContainer } from "react-toastify";
 import ChangePass from "./AuthModule/components/ChangePass/ChangePass";
-import UserList from "./UserModule/components/UserList/UserList";
+import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
+import Login from "./AuthModule/components/Login/Login";
+import Register from "./AuthModule/components/Register/Register";
+import ResetPass from "./AuthModule/components/ResetPass/ResetPass";
+import VerifyAccount from "./AuthModule/components/VerifyAccount/VerifyAccount";
+import Home from "./HomeModule/components/Home/Home";
+import ProjectsList from "./ProjectsModule/components/ProjectsList/ProjectsList";
+import MasterLayout from "./SharedModule/components/MasterLayout/MasterLayout";
+import NotFound from "./SharedModule/components/NotFound/NotFound";
 import TasksList from "./TasksModule/components/TasksList/TasksList";
-import ProjectsList from "./ProjectsModule/componenets/ProjectsList/ProjectsList";
+import UserList from "./UserModule/components/UserList/UserList";
 
 export default function App() {
-
   const routes = createBrowserRouter([
     {
-      path: "dashboard",
+      path: "/dashboard",
+      element: <MasterLayout />,
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> },
@@ -45,6 +44,7 @@ export default function App() {
 
   return (
     <>
+      <ToastContainer position="top-right" />
       <RouterProvider router={routes} />
     </>
   );
