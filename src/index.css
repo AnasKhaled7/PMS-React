@@ -1,0 +1,35 @@
+:root {
+  --main-color: rgba(239, 155, 40, 1);
+}
+
+.form-container {
+  background-color: rgba(49, 89, 81, 0.9) !important;
+}
+
+.form-header {
+  color: var(--main-color);
+}
+
+.form-title {
+  font-size: 13px;
+}
+
+.form-header::first-letter {
+  border-bottom: 2px solid var(--main-color);
+}
+
+.form-label {
+  color: var(--main-color);
+}
+
+.form-control::placeholder {
+  color: #fff;
+}
+
+.form-btn {
+  background-color: var(--main-color);
+}
+
+.form-btn:hover {
+  background-color: rgba(239, 155, 40, 0.7);
+}
