@@ -101,7 +101,8 @@ export default function Login({ saveUserData }: Props) {
                       pattern: {
                         value:
                           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message: "Password is not valid",
+                        message:
+                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
                       },
                     })}
                   />
