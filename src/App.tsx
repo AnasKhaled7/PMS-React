@@ -1,30 +1,51 @@
-import React from 'react'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ProtectedRoute from './SharedModule/components/ProtectedRoute/ProtectedRoute';
-import Home from './HomeModule/components/Home/Home';
-import NotFound from './SharedModule/components/NotFound/NotFound';
-import AuthLayout from './SharedModule/components/AuthLayout/AuthLayout';
-import Login from './AuthModule/components/Login/Login';
-import ResetPass from './AuthModule/components/ResetPass/ResetPass';
-import Register from './AuthModule/components/Register/Register';
-import VerifyAccount from './AuthModule/components/VerifyAccount/VerifyAccount';
-import ForgotPass from './AuthModule/components/ForgotPass/ForgotPass';
-import ChangePass from './AuthModule/components/ChangePass/ChangePass';
-import UserList from './UserModule/components/UserList/UserList';
-import TasksList from './TasksModule/components/TasksList/TasksList';
-import ProjectsList from './ProjectsModule/componenets/ProjectsList/ProjectsList';
+import { useState, useEffect } from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { ToastContainer } from "react-toastify";
+import ChangePass from "./AuthModule/components/ChangePass/ChangePass";
+import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
+import Login from "./AuthModule/components/Login/Login";
+import Register from "./AuthModule/components/Register/Register";
+import ResetPass from "./AuthModule/components/ResetPass/ResetPass";
+import VerifyAccount from "./AuthModule/components/VerifyAccount/VerifyAccount";
+import Home from "./HomeModule/components/Home/Home";
+import ProjectsList from "./ProjectsModule/components/ProjectsList/ProjectsList";
+import MasterLayout from "./SharedModule/components/MasterLayout/MasterLayout";
+import NotFound from "./SharedModule/components/NotFound/NotFound";
+import TasksList from "./TasksModule/components/TasksList/TasksList";
+import UserList from "./UserModule/components/UserList/UserList";
+import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 
 export default function App() {
+  const [userData, setUserData] = useState(null);
+
+  const saveUserData = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setUserData(decodedToken);
+    }
+  };
+
+  useEffect(() => {
+    saveUserData();
+  }, []);
 
   const routes = createBrowserRouter([
     {
-      path: "dashboard",
+      path: "/dashboard",
+      element: (
+        <ProtectedRoute>
+          <MasterLayout />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> },
         { path: "users", element: <UserList /> },
         { path: "tasks", element: <TasksList /> },
-        { path: "prjects", element: <ProjectsList /> },
+        { path: "projects", element: <ProjectsList /> },
       ],
     },
 
@@ -32,23 +53,21 @@ export default function App() {
       path: "/",
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login /> },
-        { path: "login", element: <Login/> },
+        { index: true, element: <Login saveUserData={saveUserData} /> },
+        { path: "login", element: <Login saveUserData={saveUserData} /> },
         { path: "forgot-pass", element: <ForgotPass /> },
         { path: "reset-pass", element: <ResetPass /> },
         { path: "register", element: <Register /> },
         { path: "verification", element: <VerifyAccount /> },
         { path: "change-pass", element: <ChangePass /> },
-
-
       ],
     },
   ]);
 
   return (
     <>
+      <ToastContainer position="top-right" />
       <RouterProvider router={routes} />
-
     </>
-  )
+  );
 }
