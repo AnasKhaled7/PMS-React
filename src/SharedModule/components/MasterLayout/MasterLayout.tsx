@@ -8,9 +8,7 @@ export default function MasterLayout() {
       <Navbar />
 
       <div className="d-flex gap-2">
-        <div>
-          <SideBar />
-        </div>
+        <SideBar />
 
         <div className="w-100">
           <Outlet />
