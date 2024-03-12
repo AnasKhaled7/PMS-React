@@ -1,17 +1,16 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm, FieldError } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import style from "./Login.module.css";
 import logo from "../../../assets/images/PMS3.png";
+import { AuthContext } from "../../../context/AuthContext";
 
-type Props = {
-  saveUserData: () => void;
-};
-
-export default function Login({ saveUserData }: Props) {
+export default function Login() {
   const navigate = useNavigate();
+
+  const { saveUserData, baseURL } = useContext(AuthContext);
 
   const [showPass, setShowPass] = useState(false);
   const showPassHandler = () => setShowPass(!showPass);
@@ -29,10 +28,7 @@ export default function Login({ saveUserData }: Props) {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.post(
-        "https://upskilling-egypt.com:3003/api/v1/Users/Login",
-        data
-      );
+      const result = await axios.post(`${baseURL}/Users/Login`, data);
       localStorage.setItem("token", result?.data?.token);
       saveUserData();
       toast.success("Logged in successfully");
