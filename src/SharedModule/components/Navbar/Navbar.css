@@ -1,0 +1,16 @@
+.fa-bell{
+    color: #EF9B28;
+    font-size: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.nav-link{
+    display: inline-block !important;
+    padding: 0px !important;
+    color: #000 !important;
+}
+.change-dropdown{
+    color: #000;
+    text-decoration: none;
+}
