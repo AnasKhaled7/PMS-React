@@ -11,10 +11,11 @@ export default function SideBar() {
     <Sidebar
       backgroundColor="transparent"
       rootStyles={{
-        height: "100vh",
         position: "sticky",
         top: 0,
         left: 0,
+        bottom: 0,
+        maxHeight: "100vh",
         backgroundColor: "#0E382F",
       }}
       collapsed={isCollapsed}

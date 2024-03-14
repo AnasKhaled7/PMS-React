@@ -35,8 +35,10 @@ const AuthProvider = ({ children }: Props) => {
   const baseURL = "https://upskilling-egypt.com:3003/api/v1";
 
   const saveUserData = () => {
-    const decodedToken = jwtDecode(token!) as User;
-    setUserData(decodedToken);
+    if (token) {
+      const decodedToken = jwtDecode(token!) as User;
+      setUserData(decodedToken);
+    }
   };
 
   useEffect(() => {
