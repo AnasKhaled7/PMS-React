@@ -1,16 +1,15 @@
-import { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm, FieldError } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import style from "./Login.module.css";
 import logo from "../../../assets/images/PMS3.png";
+import { AuthContext } from "../../../Context/AuthContext";
 
-type Props = {
-  saveUserData: () => void;
-};
+const Login: React.FC = () => {
+  const { saveUserData, baseURL, requestHeader } = useContext(AuthContext);
 
-export default function Login({ saveUserData }: Props) {
   const navigate = useNavigate();
 
   const [showPass, setShowPass] = useState(false);
@@ -29,10 +28,9 @@ export default function Login({ saveUserData }: Props) {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.post(
-        "https://upskilling-egypt.com:3003/api/v1/Users/Login",
-        data
-      );
+      const result = await axios.post(`${baseURL}/Users/Login`, data, {
+        headers: requestHeader,
+      });
       localStorage.setItem("token", result?.data?.token);
       saveUserData();
       toast.success("Logged in successfully");
@@ -46,7 +44,7 @@ export default function Login({ saveUserData }: Props) {
     <div className={`${style["auth-container"]}`}>
       <div className="container-fluid py-4">
         <div className="row justify-content-center align-items-center">
-          <div className="col-md-7">
+          <div className="col-md-6">
             <div className="logo text-center mb-2">
               <img src={logo} alt="Logo" />
             </div>
@@ -79,7 +77,7 @@ export default function Login({ saveUserData }: Props) {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span className="alert alert-danger w-100 d-flex">
+                    <span className="alert alert-danger w-100 d-flex py-1">
                       {(errors.email as FieldError).message}
                     </span>
                   )}
@@ -118,7 +116,7 @@ export default function Login({ saveUserData }: Props) {
                 </div>
                 <div className="w-100">
                   {errors.password && (
-                    <span className="alert alert-danger w-100 d-flex">
+                    <span className="alert alert-danger w-100 d-flex py-1">
                       {(errors.password as FieldError).message}
                     </span>
                   )}
@@ -163,4 +161,6 @@ export default function Login({ saveUserData }: Props) {
       </div>
     </div>
   );
-}
+};
+
+export default Login;
