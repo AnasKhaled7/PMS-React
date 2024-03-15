@@ -1,20 +1,14 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import avatar from "../../../assets/images/avatar.png";
 import logo from "../../../assets/images/nav-logo.png";
 import { AuthContext } from "../../../context/AuthContext";
+import Logout from "./Logout";
 import "./Navbar.css";
 
 const Navbar = () => {
-  const navigate = useNavigate();
-
   const { userData } = useContext(AuthContext);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   return (
     <nav className="navbar bg-body-tertiary">
@@ -25,14 +19,14 @@ const Navbar = () => {
 
         <div className="d-flex justify-content-center align-items-center gap-3 ms-auto">
           <div>
-            <img src={avatar} alt="user-avatar" />
+            <img src={avatar} alt="user's image" />
           </div>
 
           <div className="user-data d-flex flex-column">
-            <span>{userData?.userName}</span>
+            <span>{userData?.userName || "Hello"}</span>
 
             <span className="text-body-tertiary d-none d-sm-inline-block">
-              {userData?.userEmail}
+              {userData?.userEmail || ""}
             </span>
           </div>
 
@@ -48,14 +42,7 @@ const Navbar = () => {
                 Change Password
               </Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item
-                as="button"
-                className="text-danger"
-                onClick={logout}
-              >
-                <i className="fa-solid fa-right-from-bracket pe-2" />
-                Logout
-              </Dropdown.Item>
+              <Logout Dropdown={Dropdown} />
             </Dropdown.Menu>
           </Dropdown>
         </div>

@@ -10,7 +10,7 @@ import { AuthContext } from "../../../context/AuthContext";
 export default function Login() {
   const navigate = useNavigate();
 
-  const { saveUserData, baseURL } = useContext(AuthContext);
+  const { saveUserData } = useContext(AuthContext);
 
   const [showPass, setShowPass] = useState(false);
   const showPassHandler = () => setShowPass(!showPass);
@@ -28,7 +28,10 @@ export default function Login() {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.post(`${baseURL}/Users/Login`, data);
+      const result = await axios.post(
+        `${import.meta.env.VITE_APP_BASE_URL}/Users/Login`,
+        data
+      );
       localStorage.setItem("token", result?.data?.token);
       saveUserData();
       toast.success("Logged in successfully");

@@ -21,6 +21,7 @@ export default function SideBar() {
       collapsed={isCollapsed}
     >
       <Menu
+        className="mt-5"
         menuItemStyles={{
           button: {
             color: "#FFF",
@@ -30,24 +31,23 @@ export default function SideBar() {
           },
         }}
       >
-        <MenuItem style={{ backgroundColor: "transparent" }}>
-          <button
-            onClick={toggleSidebar}
-            style={{
-              position: "absolute",
-              top: "5px",
-              right: "0px",
-              zIndex: 1000,
-              backgroundColor: "#EF9B28",
-              color: "#FFF",
-              border: "none",
-              padding: "5px 4px",
-              borderRadius: "5px 0px 0px 5px",
-            }}
-          >
-            <i className={`fa fa-chevron-${isCollapsed ? "right" : "left"}`} />
-          </button>
-        </MenuItem>
+        <button
+          onClick={toggleSidebar}
+          style={{
+            position: "absolute",
+            top: "5px",
+            right: "0px",
+            zIndex: 1000,
+            backgroundColor: "#EF9B28",
+            color: "#FFF",
+            border: "none",
+            padding: "5px 4px",
+            borderRadius: "5px 0px 0px 5px",
+          }}
+        >
+          <i className={`fa fa-chevron-${isCollapsed ? "right" : "left"}`} />
+        </button>
+
         <MenuItem
           icon={<i className="fa fa-home"></i>}
           component={<NavLink to="/dashboard" end />}
