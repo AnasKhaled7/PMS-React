@@ -1,14 +1,19 @@
+import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useForm, FieldError } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
-import style from "./Login.module.css";
-import logo from "../../../assets/images/PMS3.png";
 import { AuthContext } from "../../../Context/AuthContext";
+import logo from "../../../assets/images/PMS3.png";
+import { loginAPI } from "../../../lib/APIs";
+import style from "./Login.module.css";
+import {
+  emailValidation,
+  passwordValidation,
+} from "../../../lib/InputValidator";
 
 const Login: React.FC = () => {
-  const { saveUserData, baseURL, requestHeader } = useContext(AuthContext);
+  const { saveUserData, requestHeader } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -28,7 +33,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.post(`${baseURL}/Users/Login`, data, {
+      const result = await axios.post(loginAPI, data, {
         headers: requestHeader,
       });
       localStorage.setItem("token", result?.data?.token);
@@ -61,18 +66,12 @@ const Login: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="email"
+                    aria-label="email"
                     type="email"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your E-mail"
                     autoComplete="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Email not valid",
-                      },
-                    })}
+                    {...register("email", emailValidation)}
                   />
                 </div>
                 <div className="w-100">
@@ -90,19 +89,12 @@ const Login: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="password"
+                    aria-label="password"
                     type={showPass ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    {...register("password", {
-                      required: "Password is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                      },
-                    })}
+                    {...register("password", passwordValidation)}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
@@ -110,6 +102,7 @@ const Login: React.FC = () => {
                         showPass ? "-slash" : ""
                       }`}
                       role="button"
+                      aria-label="show password"
                       onClick={showPassHandler}
                     ></i>
                   </span>

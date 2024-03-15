@@ -5,10 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../Context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
+import { resetPassAPI } from "../../../lib/APIs";
+import {
+  OTPValidation,
+  emailValidation,
+  passwordValidation,
+} from "../../../lib/InputValidator";
 import style from "./ResetPass.module.css";
 
 const ResetPass: React.FC = () => {
-  const { saveUserData, baseURL, requestHeader } = useContext(AuthContext);
+  const { saveUserData, requestHeader } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -16,7 +22,7 @@ const ResetPass: React.FC = () => {
     password: false,
     confirmPassword: false,
   });
-  
+
   const showPassHandler = (inputId: string) => {
     setShowPass((prevState) => ({
       ...prevState,
@@ -39,11 +45,11 @@ const ResetPass: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.post(`${baseURL}/Users/Reset`, data, {
+      await axios.post(resetPassAPI, data, {
         headers: requestHeader,
       });
       saveUserData();
-      toast.success("Password has been updated successfully");
+      toast.success("Password has been reset successfully");
       navigate("/");
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "An error occurred");
@@ -71,18 +77,12 @@ const ResetPass: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="email"
+                    aria-label="email"
                     type="email"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your E-mail"
                     autoComplete="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Email not valid",
-                      },
-                    })}
+                    {...register("email", emailValidation)}
                   />
                 </div>
                 <div className="w-100">
@@ -100,13 +100,12 @@ const ResetPass: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="otp"
+                    aria-label="otp code"
                     type="text"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
-                    placeholder="Enter Verification"
+                    placeholder="Enter OTP Code"
                     autoComplete="one-time-code"
-                    {...register("seed", {
-                      required: "OTP is required",
-                    })}
+                    {...register("seed", OTPValidation)}
                   />
                 </div>
                 <div className="w-100">
@@ -124,27 +123,21 @@ const ResetPass: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="password"
+                    aria-label="password"
                     type={showPass["password"] ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your New Password"
                     autoComplete="new-password"
-                    {...register("password", {
-                      required: "Password is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                      },
-                    })}
+                    {...register("password", passwordValidation)}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        showPass["password"] ? "-slash" : ""
+                        showPass["password"] ? "" : "-slash"
                       }`}
                       role="button"
                       onClick={() => showPassHandler("password")}
+                      aria-label="show password"
                     ></i>
                   </span>
                 </div>
@@ -163,26 +156,20 @@ const ResetPass: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="confirmPassword"
+                    aria-label="confirm password"
                     type={showPass["confirmPassword"] ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Confirm New Password"
                     autoComplete="new-password"
-                    {...register("confirmPassword", {
-                      required: "Confirm Password is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                      },
-                    })}
+                    {...register("confirmPassword", passwordValidation)}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        showPass["confirmPassword"] ? "-slash" : ""
+                        showPass["confirmPassword"] ? "" : "-slash"
                       }`}
                       role="button"
+                      aria-label="show password"
                       onClick={() => showPassHandler("confirmPassword")}
                     ></i>
                   </span>
@@ -200,6 +187,7 @@ const ResetPass: React.FC = () => {
                   disabled={isSubmitting}
                   type="submit"
                   className="btn form-btn w-75 rounded-4 text-light mt-4 mx-auto d-block"
+                  role="submit"
                 >
                   {isSubmitting ? (
                     <span
@@ -208,7 +196,7 @@ const ResetPass: React.FC = () => {
                       aria-hidden="true"
                     ></span>
                   ) : (
-                    "Save"
+                    "Reset Password"
                   )}
                 </button>
               </form>

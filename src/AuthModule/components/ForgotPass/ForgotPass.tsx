@@ -1,14 +1,16 @@
 import axios from "axios";
+import React, { useContext } from "react";
 import { FieldError, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import logo from "../../../assets/images/PMS3.png";
-import style from "./ForgotPass.module.css";
-import React, { useContext } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
+import logo from "../../../assets/images/PMS3.png";
+import { forgotPassAPI } from "../../../lib/APIs";
+import style from "./ForgotPass.module.css";
+import { emailValidation } from "../../../lib/InputValidator";
 
 const ForgotPass: React.FC = () => {
-  const { saveUserData, baseURL, requestHeader } = useContext(AuthContext);
+  const { saveUserData, requestHeader } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -24,7 +26,7 @@ const ForgotPass: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.post(`${baseURL}/Users/Reset/Request`, data, {
+      await axios.post(forgotPassAPI, data, {
         headers: requestHeader,
       });
       saveUserData();
@@ -56,18 +58,12 @@ const ForgotPass: React.FC = () => {
                 <div className="input-group mb-4">
                   <input
                     id="email"
+                    aria-label="email"
                     type="email"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your E-mail"
                     autoComplete="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Email not valid",
-                      },
-                    })}
+                    {...register("email", emailValidation)}
                   />
                 </div>
                 <div className="w-100">
@@ -91,7 +87,7 @@ const ForgotPass: React.FC = () => {
                       aria-hidden="true"
                     ></span>
                   ) : (
-                    "Verify"
+                    "Request Reset Password"
                   )}
                 </button>
               </form>
