@@ -1,15 +1,11 @@
 import { useContext, useState } from "react";
 import { useForm, FieldError } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import style from "./ChangPass.module.css";
 import logo from "../../../assets/images/PMS3.png";
 import { AuthContext } from "../../../context/AuthContext";
-
-// type Props = {
-//   saveUserData: () => void;
-// };
 
 export default function ChangePass() {
   const navigate = useNavigate();
@@ -31,22 +27,29 @@ export default function ChangePass() {
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
+  interface ErrorResponse {
+    message: string;
+  }
+  
   const onSubmit = async (data: Inputs) => {
     try {
       const result = await axios.put(`${baseURL}/Users/ChangePassword`, data, {
         headers: {
           Authorization: token,
         },
-      
       });
-      // localStorage.setItem("token", result?.data?.token);
-      // saveUserData();
       toast.success("Password changed successfully");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "An error occurred");
+      const axiosError = error as AxiosError;
+      const errorResponse = axiosError.response?.data as ErrorResponse;
+      if (axiosError.response?.status === 401) {
+        toast.error("Your session has expired. Please login again.");
+        navigate("/login");
+      } else {
+        toast.error(errorResponse?.message || "An error occurred");
+      }
     }
-    
   };
 
   return (
