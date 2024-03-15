@@ -90,7 +90,7 @@ export default function ChangePass() {
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        showPass ? "-slash" : ""
+                        !showPass ? "-slash" : ""
                       }`}
                       role="button"
                       onClick={showPassHandler}
@@ -129,7 +129,7 @@ export default function ChangePass() {
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        showPass ? "-slash" : ""
+                        !showPass ? "-slash" : ""
                       }`}
                       role="button"
                       onClick={showPassHandler}
@@ -168,7 +168,7 @@ export default function ChangePass() {
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        showPass ? "-slash" : ""
+                        !showPass ? "-slash" : ""
                       }`}
                       role="button"
                       onClick={showPassHandler}
