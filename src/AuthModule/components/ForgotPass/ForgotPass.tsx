@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../Context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
-import { forgotPassAPI } from "../../../lib/APIs";
+import { userURLs } from "../../../lib/APIs";
 import style from "./ForgotPass.module.css";
 import { emailValidation } from "../../../lib/InputValidator";
 
 const ForgotPass: React.FC = () => {
   const { saveUserData, requestHeader } = useContext(AuthContext);
+  const { forgotPassAPI } = userURLs;
 
   const navigate = useNavigate();
 
@@ -68,7 +69,10 @@ const ForgotPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span className="alert alert-danger w-100 d-flex text-danger py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.email as FieldError).message}
                     </span>
                   )}

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../Context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
-import { resetPassAPI } from "../../../lib/APIs";
+import { userURLs } from "../../../lib/APIs";
 import {
   OTPValidation,
   emailValidation,
@@ -15,6 +15,7 @@ import style from "./ResetPass.module.css";
 
 const ResetPass: React.FC = () => {
   const { saveUserData, requestHeader } = useContext(AuthContext);
+  const { resetPassAPI } = userURLs;
 
   const navigate = useNavigate();
 
@@ -41,7 +42,10 @@ const ResetPass: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<Inputs>();
+
+  const password = watch("password");
 
   const onSubmit = async (data: Inputs) => {
     try {
@@ -87,7 +91,10 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span className="alert alert-danger w-100 d-flex text-danger py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.email as FieldError).message}
                     </span>
                   )}
@@ -110,7 +117,10 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.seed && (
-                    <span className="alert alert-danger w-100 d-flex text-danger py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.seed as FieldError).message}
                     </span>
                   )}
@@ -143,7 +153,10 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.password && (
-                    <span className="alert alert-danger w-100 d-flex text-danger py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.password as FieldError).message}
                     </span>
                   )}
@@ -161,7 +174,12 @@ const ResetPass: React.FC = () => {
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Confirm New Password"
                     autoComplete="new-password"
-                    {...register("confirmPassword", passwordValidation)}
+                    {...register("confirmPassword", {
+                      ...passwordValidation,
+                      validate: (value) =>
+                        value === password ||
+                        "New password and confirm password do not match",
+                    })}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
@@ -176,7 +194,10 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.confirmPassword && (
-                    <span className="alert alert-danger w-100 d-flex text-danger py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.confirmPassword as FieldError).message}
                     </span>
                   )}

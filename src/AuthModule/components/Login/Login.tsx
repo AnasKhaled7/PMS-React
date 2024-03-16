@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../Context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
-import { loginAPI } from "../../../lib/APIs";
+import { userURLs } from "../../../lib/APIs";
 import style from "./Login.module.css";
 import {
   emailValidation,
@@ -14,6 +14,7 @@ import {
 
 const Login: React.FC = () => {
   const { saveUserData, requestHeader } = useContext(AuthContext);
+  const { loginAPI } = userURLs;
 
   const navigate = useNavigate();
 
@@ -76,7 +77,10 @@ const Login: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span className="alert alert-danger w-100 d-flex py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.email as FieldError).message}
                     </span>
                   )}
@@ -109,7 +113,10 @@ const Login: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.password && (
-                    <span className="alert alert-danger w-100 d-flex py-1">
+                    <span
+                      className="alert alert-danger w-100 d-flex py-1"
+                      aria-live="assertive"
+                    >
                       {(errors.password as FieldError).message}
                     </span>
                   )}
