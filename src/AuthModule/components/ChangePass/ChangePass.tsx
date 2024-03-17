@@ -6,6 +6,7 @@ import axios, { AxiosError } from "axios";
 import style from "./ChangPass.module.css";
 import logo from "../../../assets/images/PMS3.png";
 import { AuthContext } from "../../../context/AuthContext";
+import { userURLs } from "../../../lib/APIs";
 
 export default function ChangePass() {
   const navigate = useNavigate();
@@ -41,11 +42,9 @@ export default function ChangePass() {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_APP_BASE_URL}/Users/ChangePassword`,
-        data,
-        { headers: { Authorization: token } }
-      );
+      await axios.put(userURLs.changePassAPI, data, {
+        headers: { Authorization: token },
+      });
       toast.success("Password changed successfully");
       navigate("/dashboard");
     } catch (error: any) {
