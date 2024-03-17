@@ -2,11 +2,12 @@ import { useContext, useState } from "react";
 import { useForm, FieldError } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import style from "./ChangPass.module.css";
 import logo from "../../../assets/images/PMS3.png";
 import { AuthContext } from "../../../context/AuthContext";
 import { userURLs } from "../../../lib/APIs";
+import { passwordValidation } from "../../../lib/InputValidator";
 
 export default function ChangePass() {
   const navigate = useNavigate();
@@ -33,12 +34,11 @@ export default function ChangePass() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  interface ErrorResponse {
-    message: string;
-  }
+  const password = watch("newPassword");
 
   const onSubmit = async (data: Inputs) => {
     try {
@@ -48,14 +48,7 @@ export default function ChangePass() {
       toast.success("Password changed successfully");
       navigate("/dashboard");
     } catch (error: any) {
-      const axiosError = error as AxiosError;
-      const errorResponse = axiosError.response?.data as ErrorResponse;
-      if (axiosError.response?.status === 401) {
-        toast.error("Your session has expired. Please login again.");
-        navigate("/login");
-      } else {
-        toast.error(errorResponse?.message || "An error occurred");
-      }
+      toast.error(error?.response?.data?.message || "An error occurred");
     }
   };
 
@@ -87,15 +80,7 @@ export default function ChangePass() {
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your Old Password"
                     autoComplete="old-password"
-                    {...register("oldPassword", {
-                      required: "Old Password is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                      },
-                    })}
+                    {...register("oldPassword", passwordValidation)}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
@@ -129,15 +114,7 @@ export default function ChangePass() {
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your New Password"
                     autoComplete="new-password"
-                    {...register("newPassword", {
-                      required: "New Password is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                      },
-                    })}
+                    {...register("newPassword", passwordValidation)}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
@@ -172,12 +149,9 @@ export default function ChangePass() {
                     placeholder="Confirm Your New Password"
                     autoComplete="Confirm-password"
                     {...register("confirmNewPassword", {
-                      required: "Password Confirmation is required",
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message: "Not Matched with the new password provided.",
-                      },
+                      required: "Confirm new password is required",
+                      validate: (value) =>
+                        value === password || "The passwords do not match",
                     })}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
