@@ -1,53 +1,59 @@
+import React, { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import React, { ReactNode, createContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-type AuthValue = {
-  saveUserData: () => void;
-  requestHeader: any;
-  userData: string;
-};
-
-export const AuthContext = createContext<AuthValue>({
-  saveUserData: () => {},
-  requestHeader: "",
-  userData: "",
-});
-
-interface ProviderProps {
-  children: ReactNode;
+interface User {
+  userId: number;
+  roles: string[];
+  userName: string;
+  userEmail: string;
+  userGroup: string;
+  exp: number;
+  iat: number;
 }
 
-const AuthContextProvider: React.FC<ProviderProps> = (props) => {
-  const [loginData, setLoginData] = useState<any>(null);
+interface AuthContextType {
+  token: string | null;
+  userData: User | null;
+  saveUserData: () => void;
+}
 
-  const requestHeader = {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
+export const AuthContext = createContext<AuthContextType>({
+  token: null,
+  userData: null,
+  saveUserData: () => {},
+});
+
+type Props = {
+  children: React.ReactNode;
+};
+
+const AuthProvider = ({ children }: Props) => {
+  const [userData, setUserData] = useState<User | null>(null);
+  const token = localStorage.getItem("token");
 
   const saveUserData = () => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      setLoginData(decodedToken);
+    try {
+      if (token) {
+        const decodedToken = jwtDecode(token!) as User;
+        setUserData(decodedToken);
+      }
+    } catch (error) {
+      console.error("Invalid or missing token", error);
+      setUserData(null);
+      toast.error("Invalid or missing token");
     }
   };
 
-  const contextValue: AuthValue = {
-    saveUserData: saveUserData,
-    requestHeader: requestHeader,
-    userData: loginData,
-  };
-
   useEffect(() => {
-    saveUserData();
-  }, []);
+    if (token) saveUserData();
+  }, [token]);
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {props.children}
+    <AuthContext.Provider value={{ token, userData, saveUserData }}>
+      {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthContextProvider;
+export default AuthProvider;

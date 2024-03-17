@@ -3,15 +3,14 @@ import React, { useContext } from "react";
 import { FieldError, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../../Context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
 import { userURLs } from "../../../lib/APIs";
 import style from "./ForgotPass.module.css";
 import { emailValidation } from "../../../lib/InputValidator";
 
 const ForgotPass: React.FC = () => {
-  const { saveUserData, requestHeader } = useContext(AuthContext);
-  const { forgotPassAPI } = userURLs;
+  const { saveUserData } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -27,9 +26,7 @@ const ForgotPass: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.post(forgotPassAPI, data, {
-        headers: requestHeader,
-      });
+      await axios.post(userURLs.forgotPassAPI, data);
       saveUserData();
       toast.success("OTP has been sent successfully. Check your mail!");
       navigate("/reset-pass");

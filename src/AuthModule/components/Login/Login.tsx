@@ -1,22 +1,21 @@
-import axios from "axios";
-import React, { useContext, useState } from "react";
-import { FieldError, useForm } from "react-hook-form";
+import { useContext, useState } from "react";
+import { useForm, FieldError } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../../Context/AuthContext";
-import logo from "../../../assets/images/PMS3.png";
-import { userURLs } from "../../../lib/APIs";
+import axios from "axios";
 import style from "./Login.module.css";
+import logo from "../../../assets/images/PMS3.png";
+import { AuthContext } from "../../../context/AuthContext";
 import {
   emailValidation,
   passwordValidation,
 } from "../../../lib/InputValidator";
+import { userURLs } from "../../../lib/APIs";
 
-const Login: React.FC = () => {
-  const { saveUserData, requestHeader } = useContext(AuthContext);
-  const { loginAPI } = userURLs;
-
+export default function Login() {
   const navigate = useNavigate();
+
+  const { saveUserData } = useContext(AuthContext);
 
   const [showPass, setShowPass] = useState(false);
   const showPassHandler = () => setShowPass(!showPass);
@@ -34,9 +33,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.post(loginAPI, data, {
-        headers: requestHeader,
-      });
+      const result = await axios.post(userURLs.loginAPI, data);
       localStorage.setItem("token", result?.data?.token);
       saveUserData();
       toast.success("Logged in successfully");
@@ -161,6 +158,4 @@ const Login: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}

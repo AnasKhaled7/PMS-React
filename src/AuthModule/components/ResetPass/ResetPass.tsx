@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { FieldError, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../../Context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import logo from "../../../assets/images/PMS3.png";
 import { userURLs } from "../../../lib/APIs";
 import {
@@ -14,8 +14,7 @@ import {
 import style from "./ResetPass.module.css";
 
 const ResetPass: React.FC = () => {
-  const { saveUserData, requestHeader } = useContext(AuthContext);
-  const { resetPassAPI } = userURLs;
+  const { saveUserData } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -49,9 +48,7 @@ const ResetPass: React.FC = () => {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      await axios.post(resetPassAPI, data, {
-        headers: requestHeader,
-      });
+      await axios.post(userURLs.resetPassAPI, data);
       saveUserData();
       toast.success("Password has been reset successfully");
       navigate("/");
