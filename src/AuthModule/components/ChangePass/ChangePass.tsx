@@ -10,10 +10,18 @@ import { AuthContext } from "../../../context/AuthContext";
 export default function ChangePass() {
   const navigate = useNavigate();
 
-  const { token, baseURL } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
-  const [showPass, setShowPass] = useState(false);
-  const showPassHandler = () => setShowPass(!showPass);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  const toggleShowOldPassword = () => setShowOldPassword((prev) => !prev);
+
+  const toggleShowNewPassword = () => setShowNewPassword((prev) => !prev);
+
+  const toggleShowConfirmNewPassword = () =>
+    setShowConfirmNewPassword((prev) => !prev);
 
   type Inputs = {
     oldPassword: string;
@@ -30,14 +38,14 @@ export default function ChangePass() {
   interface ErrorResponse {
     message: string;
   }
-  
+
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.put(`${baseURL}/Users/ChangePassword`, data, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      await axios.put(
+        `${import.meta.env.VITE_APP_BASE_URL}/Users/ChangePassword`,
+        data,
+        { headers: { Authorization: token } }
+      );
       toast.success("Password changed successfully");
       navigate("/dashboard");
     } catch (error: any) {
@@ -67,13 +75,16 @@ export default function ChangePass() {
               </div>
               <form noValidate onSubmit={handleSubmit(onSubmit)}>
                 {/* Old Password Input */}
-                <label htmlFor="oldPassword" className="form-label mb-0 opacity-75 ">
-                Old Password
+                <label
+                  htmlFor="oldPassword"
+                  className="form-label mb-0 opacity-75 "
+                >
+                  Old Password
                 </label>
                 <div className="input-group mb-4">
                   <input
                     id="oldPassword"
-                    type={showPass ? "text" : "password"}
+                    type={showOldPassword ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your Old Password"
                     autoComplete="old-password"
@@ -90,10 +101,10 @@ export default function ChangePass() {
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        !showPass ? "-slash" : ""
+                        !showOldPassword ? "-slash" : ""
                       }`}
                       role="button"
-                      onClick={showPassHandler}
+                      onClick={toggleShowOldPassword}
                     ></i>
                   </span>
                 </div>
@@ -106,13 +117,16 @@ export default function ChangePass() {
                 </div>
 
                 {/* New Password Input */}
-                <label htmlFor="password" className="form-label mb-0 opacity-75">
+                <label
+                  htmlFor="password"
+                  className="form-label mb-0 opacity-75"
+                >
                   New Password
                 </label>
                 <div className="input-group mb-4">
                   <input
                     id="newPassword"
-                    type={showPass ? "text" : "password"}
+                    type={showNewPassword ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your New Password"
                     autoComplete="new-password"
@@ -129,10 +143,10 @@ export default function ChangePass() {
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        !showPass ? "-slash" : ""
+                        !showNewPassword ? "-slash" : ""
                       }`}
                       role="button"
-                      onClick={showPassHandler}
+                      onClick={toggleShowNewPassword}
                     ></i>
                   </span>
                 </div>
@@ -145,13 +159,16 @@ export default function ChangePass() {
                 </div>
 
                 {/* Confirm New Password Input */}
-                <label htmlFor="confirmNewPassword" className="form-label mb-0 opacity-75">
-                Confirm New Password
+                <label
+                  htmlFor="confirmNewPassword"
+                  className="form-label mb-0 opacity-75"
+                >
+                  Confirm New Password
                 </label>
                 <div className="input-group mb-4">
                   <input
                     id="confirmNewPassword"
-                    type={showPass ? "text" : "password"}
+                    type={showConfirmNewPassword ? "text" : "password"}
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Confirm Your New Password"
                     autoComplete="Confirm-password"
@@ -160,18 +177,17 @@ export default function ChangePass() {
                       pattern: {
                         value:
                           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                        message:
-                          "Not Matched with the new password provided.",
+                        message: "Not Matched with the new password provided.",
                       },
                     })}
                   />
                   <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                     <i
                       className={`fa-regular text-light fa-eye${
-                        !showPass ? "-slash" : ""
+                        !showConfirmNewPassword ? "-slash" : ""
                       }`}
                       role="button"
-                      onClick={showPassHandler}
+                      onClick={toggleShowConfirmNewPassword}
                     ></i>
                   </span>
                 </div>
