@@ -74,12 +74,12 @@ export default function Login() {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span
-                      className="alert alert-danger w-100 d-flex py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.email as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 
@@ -110,12 +110,12 @@ export default function Login() {
                 </div>
                 <div className="w-100">
                   {errors.password && (
-                    <span
-                      className="alert alert-danger w-100 d-flex py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.password as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 

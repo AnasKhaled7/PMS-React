@@ -66,12 +66,12 @@ const ForgotPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span
-                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.email as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 

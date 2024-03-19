@@ -92,13 +92,12 @@ export default function ChangePass() {
                     ></i>
                   </span>
                 </div>
-                <div className="w-100">
-                  {errors.oldPassword && (
-                    <span className="alert alert-danger w-100 d-flex">
-                      {(errors.oldPassword as FieldError).message}
-                    </span>
-                  )}
-                </div>
+
+                {errors.oldPassword && (
+                  <div className="alert alert-danger py-1">
+                    {(errors.oldPassword as FieldError).message}
+                  </div>
+                )}
 
                 {/* New Password Input */}
                 <label
@@ -126,13 +125,12 @@ export default function ChangePass() {
                     ></i>
                   </span>
                 </div>
-                <div className="w-100">
-                  {errors.newPassword && (
-                    <span className="alert alert-danger w-100 d-flex">
-                      {(errors.newPassword as FieldError).message}
-                    </span>
-                  )}
-                </div>
+
+                {errors.newPassword && (
+                  <div className="alert alert-danger py-1">
+                    {(errors.newPassword as FieldError).message}
+                  </div>
+                )}
 
                 {/* Confirm New Password Input */}
                 <label
@@ -164,13 +162,12 @@ export default function ChangePass() {
                     ></i>
                   </span>
                 </div>
-                <div className="w-100">
-                  {errors.confirmNewPassword && (
-                    <span className="alert alert-danger w-100 d-flex">
-                      {(errors.confirmNewPassword as FieldError).message}
-                    </span>
-                  )}
-                </div>
+
+                {errors.confirmNewPassword && (
+                  <div className="alert alert-danger py-1">
+                    {(errors.confirmNewPassword as FieldError).message}
+                  </div>
+                )}
 
                 {/* submit button */}
                 <button
