@@ -88,12 +88,12 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.email && (
-                    <span
-                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.email as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 
@@ -150,12 +150,12 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.password && (
-                    <span
-                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.password as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 
@@ -191,12 +191,12 @@ const ResetPass: React.FC = () => {
                 </div>
                 <div className="w-100">
                   {errors.confirmPassword && (
-                    <span
-                      className="alert alert-danger w-100 d-flex text-danger py-1"
+                    <div
+                      className="alert alert-danger py-1"
                       aria-live="assertive"
                     >
                       {(errors.confirmPassword as FieldError).message}
-                    </span>
+                    </div>
                   )}
                 </div>
 

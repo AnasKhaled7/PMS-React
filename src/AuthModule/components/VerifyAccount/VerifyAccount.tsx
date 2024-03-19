@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useForm, FieldError } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
-import style from "../Login/Login.module.css";
+import { FieldError, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import logo from "../../../assets/images/PMS3.png";
-
+import style from "../Login/Login.module.css";
+import { userURLs } from "../../../lib/APIs";
+import { OTPValidation, emailValidation } from "../../../lib/InputValidator";
 
 export default function VerifyAccount() {
   const navigate = useNavigate();
@@ -23,11 +23,7 @@ export default function VerifyAccount() {
 
   const onSubmit = async (data: Inputs) => {
     try {
-      const result = await axios.put(
-        "https://upskilling-egypt.com:3003/api/v1/Users/verify",
-        data
-      );
-      localStorage.setItem("token", result?.data?.token);
+      await axios.put(`${userURLs.verifyAPI}`, data);
       toast.success("verification is successfully");
       navigate("/login");
     } catch (error: any) {
@@ -60,27 +56,19 @@ export default function VerifyAccount() {
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter your E-mail"
                     autoComplete="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Email not valid",
-                      },
-                    })}
+                    {...register("email", emailValidation)}
                   />
                 </div>
-                <div className="w-100">
-                  {errors.email && (
-                    <span className="alert alert-danger w-100 d-flex">
-                      {(errors.email as FieldError).message}
-                    </span>
-                  )}
-                </div>
+
+                {errors.email && (
+                  <div className="alert alert-danger py-1">
+                    {(errors.email as FieldError).message}
+                  </div>
+                )}
 
                 {/* code input */}
                 <label htmlFor="code" className="form-label mb-0">
-                OTP Verification
+                  OTP Verification
                 </label>
                 <div className="input-group mb-4">
                   <input
@@ -89,19 +77,15 @@ export default function VerifyAccount() {
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter Verification"
                     autoComplete="current-code"
-                    {...register("code", {
-                      required: "code is required",
-                    })}
+                    {...register("code", OTPValidation)}
                   />
-                  
                 </div>
-                <div className="w-100">
-                  {errors.code && (
-                    <span className="alert alert-danger w-100 d-flex">
-                      {(errors.code as FieldError).message}
-                    </span>
-                  )}
-                </div>
+                {errors.code && (
+                  <div className="alert alert-danger py-1">
+                    {(errors.code as FieldError).message}
+                  </div>
+                )}
+
                 {/* submit button */}
                 <button
                   disabled={isSubmitting}

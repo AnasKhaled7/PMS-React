@@ -14,12 +14,6 @@ import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRo
 import TasksList from "./TasksModule/components/TasksList/TasksList";
 import UserList from "./UserModule/components/UserList/UserList";
 
-import React, { Suspense, lazy } from 'react';
-
-// Lazy load the Register component
-const LazyRegister = lazy(() => import('./AuthModule/components/Register/Register'));
-
-
 export default function App() {
   const routes = createBrowserRouter([
     {
@@ -46,9 +40,7 @@ export default function App() {
         { path: "login", element: <Login /> },
         { path: "forgot-pass", element: <ForgotPass /> },
         { path: "reset-pass", element: <ResetPass /> },
-        // { path: "register", element: <Register /> },
-        // Use the lazy loaded Register component here
-        { path: 'register', element: <LazyRegister /> },
+        { path: "register", element: <Register /> },
         { path: "verification", element: <VerifyAccount /> },
         { path: "change-pass", element: <ChangePass /> },
       ],
@@ -59,7 +51,6 @@ export default function App() {
     <>
       <ToastContainer position="top-right" />
       <RouterProvider router={routes} />
-
     </>
   );
 }

@@ -1,15 +1,20 @@
-import { useState } from "react";
-import { useForm, FieldError } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
+import { useState } from "react";
+import { FieldError, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import logo from "../../../assets/images/PMS3.png";
+import { userURLs } from "../../../lib/APIs";
+import {
+  countryValidation,
+  emailValidation,
+  passwordValidation,
+  phoneNumberValidation,
+  userNameValidation,
+} from "../../../lib/InputValidator";
 
 export default function Register() {
   const navigate = useNavigate();
-
-  // const [showPass, setShowPass] = useState(false);
-  // const showPassHandler = () => setShowPass(!showPass);
 
   const [showPass, setShowPass] = useState<{ [key: string]: boolean }>({
     password: false,
@@ -40,10 +45,10 @@ export default function Register() {
     watch,
   } = useForm<Inputs>();
 
-  const password = watch("password"); // Watching the 'password' field
+  const password = watch("password");
 
   const appendToFormData = (data: Inputs) => {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("userName", data.userName);
     formData.append("email", data.email);
     formData.append("country", data.country);
@@ -54,26 +59,14 @@ export default function Register() {
     return formData;
   };
 
-  // handle axios (call api)
   const onSubmit = async (data: Inputs) => {
-    // console.log(data);
     const registerFormData = appendToFormData(data);
-    let token = localStorage.getItem("token");
+
     try {
-      let response = await axios.post(
-        "https://upskilling-egypt.com:3003/api/v1/Users/Register",
-        registerFormData,
-        {
-          headers: {
-            Authorization: token, // "Authorization" should be spelled correctly
-          },
-        }
-      );
-      console.log(response);
+      await axios.post(`${userURLs.registerAPI}`, registerFormData);
       navigate("/verification");
-      toast.success("registration is successfully");
+      toast.success("Registered successfully");
     } catch (error: any) {
-      console.log(error.response.data.message);
       toast.error(error?.response?.data?.message || "An error occurred");
     }
   };
@@ -96,34 +89,23 @@ export default function Register() {
                   <div className="col-md-6">
                     {/* userName  */}
                     <label htmlFor="userName" className="form-label mb-0">
-                      UserName
+                      Username
                     </label>
                     <div className="input-group flex-nowrap mb-3">
                       <input
                         id="userName"
                         type="text"
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                         placeholder="Enter your userName"
                         aria-label="Enter your userName"
                         aria-describedby="addon-wrapping"
-                        {...register("userName", {
-                          required: "UserName is required",
-                          minLength: {
-                            value: 4,
-                            message: "UserName must be at least 4 characters",
-                          },
-                          pattern: {
-                            value: /^[a-zA-Z]+\d*$/,
-                            message:
-                              "UserName must contain characters and end with numbers without spaces",
-                          },
-                        })}
+                        {...register("userName", userNameValidation)}
                       />
                     </div>
                     {errors.userName && (
-                      <p className="alert alert-danger">
+                      <div className="alert alert-danger py-1">
                         {errors.userName.message}
-                      </p>
+                      </div>
                     )}
                   </div>
 
@@ -136,24 +118,17 @@ export default function Register() {
                       <input
                         id="email"
                         type="email"
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                         placeholder="Enter your E-mail"
                         autoComplete="email"
-                        {...register("email", {
-                          required: "Email is required",
-                          pattern: {
-                            value:
-                              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                            message: "Email not valid",
-                          },
-                        })}
+                        {...register("email", emailValidation)}
                       />
                     </div>
                     <div className="w-100">
                       {errors.email && (
-                        <span className="alert alert-danger w-100 d-flex">
+                        <div className="alert alert-danger py-1">
                           {(errors.email as FieldError).message}
-                        </span>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -169,49 +144,40 @@ export default function Register() {
                       <input
                         id="country"
                         type="text"
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                         placeholder="Enter your country  "
                         aria-label="Enter your country  "
                         aria-describedby="addon-wrapping"
-                        {...register("country", {
-                          required: "country  is required",
-                        })}
+                        {...register("country", countryValidation)}
                       />
                     </div>
                     {errors.country && (
-                      <p className="alert alert-danger">
+                      <div className="alert alert-danger py-1">
                         {errors.country.message}
-                      </p>
+                      </div>
                     )}
                   </div>
 
                   <div className="col-md-6">
                     {/* phoneNumber   */}
                     <label htmlFor="phoneNumber" className="form-label mb-0">
-                      phoneNumber
+                      phone
                     </label>
                     <div className="input-group flex-nowrap mb-3">
                       <input
                         id="phoneNumber"
                         type="text"
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                         placeholder="Enter your Egyptian phone number"
                         aria-label="Enter your Egyptian phone number"
                         aria-describedby="addon-wrapping"
-                        {...register("phoneNumber", {
-                          required: "Phone number is required",
-                          pattern: {
-                            value: /^(01)[0-9]{9}$/,
-                            message:
-                              "Please enter a valid Egyptian phone number",
-                          },
-                        })}
+                        {...register("phoneNumber", phoneNumberValidation)}
                       />
                     </div>
                     {errors.phoneNumber && (
-                      <p className="alert alert-danger">
+                      <div className="alert alert-danger py-1">
                         {errors.phoneNumber.message}
-                      </p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -228,31 +194,13 @@ export default function Register() {
                         aria-label="password"
                         type={showPass["password"] ? "text" : "password"}
                         className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
-                        placeholder="Enter your New Password"
+                        placeholder="Enter your Password"
                         autoComplete="new-password"
-                        {...register("password", {
-                          required: "Password is required",
-                          pattern: {
-                            value:
-                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                            message:
-                              "Password must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                          },
-                        })}
+                        {...register("password", passwordValidation)}
                       />
-                      {/* it would be better if we changed this to a button because we have an onClick here. This will make it accessible for keyboard users as well by using the tap to navigate through them and space or enter to toggle the password */}
-                      {/* <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
-                        <i
-                          className={`fa-regular text-light fa-eye${
-                            showPass ? "-slash" : ""
-                          }`}
-                          role="button"
-                          onClick={showPassHandler}
-                        ></i>
-                      </span> */}
 
                       <button
-                        className="btn btn-outline-secondary bg-transparent border-0 border-bottom rounded-0"
+                        className="btn bg-transparent border-0 border-bottom rounded-0"
                         type="button"
                         onClick={() => showPassHandler("password")}
                         aria-label={
@@ -268,9 +216,9 @@ export default function Register() {
                     </div>
                     <div className="w-100">
                       {errors.password && (
-                        <span className="alert alert-danger w-100 d-flex">
+                        <div className="alert alert-danger py-1">
                           {(errors.password as FieldError).message}
-                        </span>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -281,7 +229,7 @@ export default function Register() {
                       htmlFor="confirmPassword"
                       className="form-label mb-0"
                     >
-                      confirmPassword
+                      Confirm Password
                     </label>
                     <div className="input-group mb-4">
                       <input
@@ -289,10 +237,10 @@ export default function Register() {
                         aria-label="confirm password"
                         type={showPass["confirmPassword"] ? "text" : "password"}
                         className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
-                        placeholder="Confirm New Password"
+                        placeholder="Confirm Password"
                         autoComplete="new-password"
                         {...register("confirmPassword", {
-                          required: "confirmPassword is required",
+                          required: "Confirm password is required",
                           validate: (value) =>
                             value === password || "Passwords do not match",
                         })}
@@ -314,15 +262,15 @@ export default function Register() {
                     </div>
                     <div className="w-100">
                       {errors.confirmPassword && (
-                        <span className="alert alert-danger w-100 d-flex">
+                        <div className="alert alert-danger py-1">
                           {(errors.confirmPassword as FieldError).message}
-                        </span>
+                        </div>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* profileImage    */}
+                {/* profileImage */}
                 <label htmlFor="confirmPassword" className="form-label mb-2">
                   profileImage
                 </label>
@@ -340,23 +288,21 @@ export default function Register() {
                       validate: {
                         fileSize: (value: FileList | null) => {
                           if (value && value.length > 0) {
-                            // Check if files are selected
-                            const fileSizeInMB = value[0].size / (1024 * 1024); // Calculate file size in MB
+                            const fileSizeInMB = value[0].size / (1024 * 1024);
                             if (fileSizeInMB > 5) {
-                              // Maximum allowed file size (5 MB)
                               return "File size exceeds the limit (5 MB)";
                             }
                           }
-                          return true; // Validation passed
+                          return true;
                         },
                       },
                     })}
                   />
                 </div>
                 {errors.profileImage && (
-                  <p className="alert alert-danger">
+                  <div className="alert alert-danger py-1">
                     {errors.profileImage.message}
-                  </p>
+                  </div>
                 )}
 
                 {/* submit button */}
