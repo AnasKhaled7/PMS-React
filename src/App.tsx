@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import  { jwtDecode,JwtPayload } from 'jwt-decode';
 import { ToastContainer } from "react-toastify";
 import ChangePass from "./AuthModule/components/ChangePass/ChangePass";
 import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
@@ -16,14 +16,21 @@ import TasksList from "./TasksModule/components/TasksList/TasksList";
 import UserList from "./UserModule/components/UserList/UserList";
 import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 
+import React, { Suspense, lazy } from 'react';
+
+// Lazy load the Register component
+const LazyRegister = lazy(() => import('./AuthModule/components/Register/Register'));
+
+
 export default function App() {
-  const [userData, setUserData] = useState(null);
+
+  const [userData, setUserData] = useState<JwtPayload | null>(null);
 
   const saveUserData = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage?.getItem("token");
 
     if (token) {
-      const decodedToken = jwtDecode(token);
+      const decodedToken = jwtDecode(token) as JwtPayload;
       setUserData(decodedToken);
     }
   };
@@ -57,7 +64,9 @@ export default function App() {
         { path: "login", element: <Login saveUserData={saveUserData} /> },
         { path: "forgot-pass", element: <ForgotPass /> },
         { path: "reset-pass", element: <ResetPass /> },
-        { path: "register", element: <Register /> },
+        // { path: "register", element: <Register /> },
+        // Use the lazy loaded Register component here
+        { path: 'register', element: <LazyRegister /> },
         { path: "verification", element: <VerifyAccount /> },
         { path: "change-pass", element: <ChangePass /> },
       ],
@@ -68,6 +77,7 @@ export default function App() {
     <>
       <ToastContainer position="top-right" />
       <RouterProvider router={routes} />
+
     </>
   );
 }

@@ -3,15 +3,25 @@ import { useForm, FieldError } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import style from "../Login/Login.module.css";
 import logo from "../../../assets/images/PMS3.png";
-
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const [showPass, setShowPass] = useState(false);
-  const showPassHandler = () => setShowPass(!showPass);
+  // const [showPass, setShowPass] = useState(false);
+  // const showPassHandler = () => setShowPass(!showPass);
+
+  const [showPass, setShowPass] = useState<{ [key: string]: boolean }>({
+    password: false,
+    confirmPassword: false,
+  });
+
+  const showPassHandler = (inputId: string) => {
+    setShowPass((prevState) => ({
+      ...prevState,
+      [inputId]: !prevState[inputId],
+    }));
+  };
 
   type Inputs = {
     email: string;
@@ -20,14 +30,17 @@ export default function Register() {
     country: string;
     phoneNumber: string;
     confirmPassword: string;
-    profileImage: string;
+    profileImage: FileList;
   };
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<Inputs>();
+
+  const password = watch("password"); // Watching the 'password' field
 
   const appendToFormData = (data: Inputs) => {
     let formData = new FormData();
@@ -43,9 +56,9 @@ export default function Register() {
 
   // handle axios (call api)
   const onSubmit = async (data: Inputs) => {
-    console.log(data);
-    let registerFormData = appendToFormData(data);
-    let token = localStorage.getItem("adminToken");
+    // console.log(data);
+    const registerFormData = appendToFormData(data);
+    let token = localStorage.getItem("token");
     try {
       let response = await axios.post(
         "https://upskilling-egypt.com:3003/api/v1/Users/Register",
@@ -58,7 +71,7 @@ export default function Register() {
       );
       console.log(response);
       navigate("/verification");
-      toast.success("registeration is successfully");
+      toast.success("registration is successfully");
     } catch (error: any) {
       console.log(error.response.data.message);
       toast.error(error?.response?.data?.message || "An error occurred");
@@ -66,7 +79,7 @@ export default function Register() {
   };
 
   return (
-    <div className={`${style["auth-container"]}`}>
+    <div className="auth-container">
       <div className="container-fluid py-4">
         <div className="row justify-content-center align-items-center">
           <div className="col-md-9">
@@ -89,12 +102,21 @@ export default function Register() {
                       <input
                         id="userName"
                         type="text"
-                        className="form-control  bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
-                        placeholder="Enter your userName "
-                        aria-label="Enter your userName "
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
+                        placeholder="Enter your userName"
+                        aria-label="Enter your userName"
                         aria-describedby="addon-wrapping"
                         {...register("userName", {
-                          required: "userName is required",
+                          required: "UserName is required",
+                          minLength: {
+                            value: 4,
+                            message: "UserName must be at least 4 characters",
+                          },
+                          pattern: {
+                            value: /^[a-zA-Z]+\d*$/,
+                            message:
+                              "UserName must contain characters and end with numbers without spaces",
+                          },
                         })}
                       />
                     </div>
@@ -173,11 +195,16 @@ export default function Register() {
                         id="phoneNumber"
                         type="text"
                         className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
-                        placeholder="Enter your phoneNumber  "
-                        aria-label="Enter your phoneNumber  "
+                        placeholder="Enter your Egyptian phone number"
+                        aria-label="Enter your Egyptian phone number"
                         aria-describedby="addon-wrapping"
                         {...register("phoneNumber", {
-                          required: "phoneNumber  is required",
+                          required: "Phone number is required",
+                          pattern: {
+                            value: /^(01)[0-9]{9}$/,
+                            message:
+                              "Please enter a valid Egyptian phone number",
+                          },
                         })}
                       />
                     </div>
@@ -198,10 +225,11 @@ export default function Register() {
                     <div className="input-group mb-4">
                       <input
                         id="password"
-                        type={showPass ? "text" : "password"}
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
-                        placeholder="Enter your password"
-                        autoComplete="current-password"
+                        aria-label="password"
+                        type={showPass["password"] ? "text" : "password"}
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
+                        placeholder="Enter your New Password"
+                        autoComplete="new-password"
                         {...register("password", {
                           required: "Password is required",
                           pattern: {
@@ -212,7 +240,8 @@ export default function Register() {
                           },
                         })}
                       />
-                      <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
+                      {/* it would be better if we changed this to a button because we have an onClick here. This will make it accessible for keyboard users as well by using the tap to navigate through them and space or enter to toggle the password */}
+                      {/* <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
                         <i
                           className={`fa-regular text-light fa-eye${
                             showPass ? "-slash" : ""
@@ -220,7 +249,22 @@ export default function Register() {
                           role="button"
                           onClick={showPassHandler}
                         ></i>
-                      </span>
+                      </span> */}
+
+                      <button
+                        className="btn btn-outline-secondary bg-transparent border-0 border-bottom rounded-0"
+                        type="button"
+                        onClick={() => showPassHandler("password")}
+                        aria-label={
+                          showPass ? "Hide password" : "Show password"
+                        }
+                      >
+                        <i
+                          className={`fa-regular text-light fa-eye${
+                            showPass["password"] ? "" : "-slash"
+                          }`}
+                        ></i>
+                      </button>
                     </div>
                     <div className="w-100">
                       {errors.password && (
@@ -242,29 +286,31 @@ export default function Register() {
                     <div className="input-group mb-4">
                       <input
                         id="confirmPassword"
-                        type={showPass ? "text" : "confirmPassword"}
-                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
-                        placeholder="Enter your confirmPassword"
-                        autoComplete="current-password"
+                        aria-label="confirm password"
+                        type={showPass["confirmPassword"] ? "text" : "password"}
+                        className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
+                        placeholder="Confirm New Password"
+                        autoComplete="new-password"
                         {...register("confirmPassword", {
                           required: "confirmPassword is required",
-                          pattern: {
-                            value:
-                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/,
-                            message:
-                              "confirmPassword must contain at least 6 characters, including one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)",
-                          },
+                          validate: (value) =>
+                            value === password || "Passwords do not match",
                         })}
                       />
-                      <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
+                      <button
+                        className="btn btn-outline-secondary bg-transparent border-0 border-bottom rounded-0"
+                        type="button"
+                        onClick={() => showPassHandler("confirmPassword")}
+                        aria-label={
+                          showPass ? "Hide password" : "Show password"
+                        }
+                      >
                         <i
                           className={`fa-regular text-light fa-eye${
-                            showPass ? "-slash" : ""
+                            showPass["confirmPassword"] ? "" : "-slash"
                           }`}
-                          role="button"
-                          onClick={showPassHandler}
                         ></i>
-                      </span>
+                      </button>
                     </div>
                     <div className="w-100">
                       {errors.confirmPassword && (
@@ -283,11 +329,28 @@ export default function Register() {
 
                 <div className="input-group flex-nowrap mb-3">
                   <input
+                    id="profileImage"
                     type="file"
+                    accept=".jpg, .jpeg, .png"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-2"
-                    aria-label="Enter your profileImage"
+                    aria-label="Upload your profile image"
                     aria-describedby="addon-wrapping"
-                    {...register("profileImage")}
+                    {...register("profileImage", {
+                      required: "Profile image is required",
+                      validate: {
+                        fileSize: (value: FileList | null) => {
+                          if (value && value.length > 0) {
+                            // Check if files are selected
+                            const fileSizeInMB = value[0].size / (1024 * 1024); // Calculate file size in MB
+                            if (fileSizeInMB > 5) {
+                              // Maximum allowed file size (5 MB)
+                              return "File size exceeds the limit (5 MB)";
+                            }
+                          }
+                          return true; // Validation passed
+                        },
+                      },
+                    })}
                   />
                 </div>
                 {errors.profileImage && (
@@ -295,22 +358,6 @@ export default function Register() {
                     {errors.profileImage.message}
                   </p>
                 )}
-
-                {/* links */}
-                {/* <div className="d-flex justify-content-between">
-                  <Link
-                    to="/login"
-                    className="text-decoration-none text-light"
-                  >
-                    Login Now ?
-                  </Link>
-                  <Link
-                    to="/verification"
-                    className="text-decoration-none text-light"
-                  >
-                    verify Account  ?
-                  </Link>
-                </div> */}
 
                 {/* submit button */}
                 <button
@@ -325,7 +372,7 @@ export default function Register() {
                       aria-hidden="true"
                     ></span>
                   ) : (
-                    "Save"
+                    "Register"
                   )}
                 </button>
               </form>

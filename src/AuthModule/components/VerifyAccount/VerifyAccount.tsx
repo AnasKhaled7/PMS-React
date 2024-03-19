@@ -10,9 +10,6 @@ import logo from "../../../assets/images/PMS3.png";
 export default function VerifyAccount() {
   const navigate = useNavigate();
 
-  const [showPass, setShowPass] = useState(false);
-  const showPassHandler = () => setShowPass(!showPass);
-
   type Inputs = {
     email: string;
     code: string;
@@ -44,7 +41,7 @@ export default function VerifyAccount() {
         <div className="row justify-content-center align-items-center">
           <div className="col-md-7">
             <div className="logo text-center mb-2">
-              <img src={logo} alt="Logo" />
+              <img src={logo} alt="PMS Logo" />
             </div>
             <div className="form-container rounded-4 text-light p-5">
               <div className="form-info mb-5">
@@ -88,7 +85,7 @@ export default function VerifyAccount() {
                 <div className="input-group mb-4">
                   <input
                     id="code"
-                    type={showPass ? "text" : "password"}
+                    type="text"
                     className="form-control bg-transparent border-0 border-bottom rounded-0 shadow-none text-light py-1 px-0"
                     placeholder="Enter Verification"
                     autoComplete="current-code"
@@ -96,15 +93,7 @@ export default function VerifyAccount() {
                       required: "code is required",
                     })}
                   />
-                  <span className="input-group-text bg-transparent border-0 border-bottom rounded-0">
-                    <i
-                      className={`fa-regular text-light fa-eye${
-                        showPass ? "-slash" : ""
-                      }`}
-                      role="button"
-                      onClick={showPassHandler}
-                    ></i>
-                  </span>
+                  
                 </div>
                 <div className="w-100">
                   {errors.code && (
@@ -113,23 +102,6 @@ export default function VerifyAccount() {
                     </span>
                   )}
                 </div>
-
-                {/* links */}
-                {/* <div className="d-flex justify-content-between">
-                  <Link
-                    to="/register"
-                    className="text-decoration-none text-light"
-                  >
-                    Login Now ?
-                  </Link>
-                  <Link
-                    to="/forgot-pass"
-                    className="text-decoration-none text-light"
-                  >
-                    Forget Password ?
-                  </Link>
-                </div> */}
-
                 {/* submit button */}
                 <button
                   disabled={isSubmitting}
@@ -143,7 +115,7 @@ export default function VerifyAccount() {
                       aria-hidden="true"
                     ></span>
                   ) : (
-                    "Save"
+                    "Verify Account"
                   )}
                 </button>
               </form>
