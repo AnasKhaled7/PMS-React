@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import  { jwtDecode,JwtPayload } from 'jwt-decode';
 import { ToastContainer } from "react-toastify";
 import ChangePass from "./AuthModule/components/ChangePass/ChangePass";
 import ForgotPass from "./AuthModule/components/ForgotPass/ForgotPass";
@@ -12,9 +10,9 @@ import Home from "./HomeModule/components/Home/Home";
 import ProjectsList from "./ProjectsModule/components/ProjectsList/ProjectsList";
 import MasterLayout from "./SharedModule/components/MasterLayout/MasterLayout";
 import NotFound from "./SharedModule/components/NotFound/NotFound";
+import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 import TasksList from "./TasksModule/components/TasksList/TasksList";
 import UserList from "./UserModule/components/UserList/UserList";
-import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 
 import React, { Suspense, lazy } from 'react';
 
@@ -23,22 +21,6 @@ const LazyRegister = lazy(() => import('./AuthModule/components/Register/Registe
 
 
 export default function App() {
-
-  const [userData, setUserData] = useState<JwtPayload | null>(null);
-
-  const saveUserData = () => {
-    const token = localStorage?.getItem("token");
-
-    if (token) {
-      const decodedToken = jwtDecode(token) as JwtPayload;
-      setUserData(decodedToken);
-    }
-  };
-
-  useEffect(() => {
-    saveUserData();
-  }, []);
-
   const routes = createBrowserRouter([
     {
       path: "/dashboard",
@@ -60,8 +42,8 @@ export default function App() {
       path: "/",
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login saveUserData={saveUserData} /> },
-        { path: "login", element: <Login saveUserData={saveUserData} /> },
+        { index: true, element: <Login /> },
+        { path: "login", element: <Login /> },
         { path: "forgot-pass", element: <ForgotPass /> },
         { path: "reset-pass", element: <ResetPass /> },
         // { path: "register", element: <Register /> },

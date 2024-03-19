@@ -30,7 +30,8 @@
   background-color: var(--main-color);
 }
 
-.form-btn:hover {
+.form-btn:hover,
+.form-btn:focus {
   background-color: rgba(239, 155, 40, 0.7);
 }
 
