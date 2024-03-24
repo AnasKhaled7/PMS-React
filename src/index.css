@@ -1,5 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Abel&family=Inter&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+
 :root {
   --main-color: rgba(239, 155, 40, 1);
+  --gray: rgba(245, 245, 245, 1);
+  --gray-text: rgba(79, 79, 79, 1);
 }
 
 .form-container {
@@ -43,4 +47,36 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.moduleContainer {
+  background-color: var(--gray);
+  padding: 10px;
+}
+
+.headerModule {
+  background-color: #fff;
+  padding: 15px 25px;
+}
+
+.tableRow {
+  background-color: rgba(49, 89, 81, 0.9) !important;
+  font-family: "Montserrat", sans-serif;
+}
+
+.tableContainer {
+  background-color: #fff;
+}
+
+.grayText {
+  color: var(--gray-text) !important;
+  font-family: "Montserrat", sans-serif;
+}
+
+.searchInput::placeholder {
+  color: var(--gray-text);
+}
+
+.textStyle {
+  font-family: "Montserrat", sans-serif;
 }
