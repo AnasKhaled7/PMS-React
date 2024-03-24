@@ -11,3 +11,9 @@ export const userURLs = {
   resetPassAPI: `${BASE_USERS}/Reset`,
   changePassAPI: `${BASE_USERS}/ChangePassword`,
 };
+
+const BASE_PROJECTS: string = `${BASE_URL}/Project`;
+
+export const projectURLs = {
+  base: BASE_PROJECTS,
+};
