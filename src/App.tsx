@@ -13,6 +13,7 @@ import NotFound from "./SharedModule/components/NotFound/NotFound";
 import ProtectedRoute from "./SharedModule/components/ProtectedRoute/ProtectedRoute";
 import TasksList from "./TasksModule/components/TasksList/TasksList";
 import UserList from "./UserModule/components/UserList/UserList";
+import AddNewTask from "./TasksModule/components/TasksList/AddNewTask";
 
 export default function App() {
   const routes = createBrowserRouter([
@@ -28,6 +29,7 @@ export default function App() {
         { index: true, element: <Home /> },
         { path: "users", element: <UserList /> },
         { path: "tasks", element: <TasksList /> },
+        { path: "task-data", element: <AddNewTask /> },
         { path: "projects", element: <ProjectsList /> },
       ],
     },
