@@ -5,6 +5,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { projectURLs } from "../lib/APIs";
+import Loading from "../SharedModule/components/Loading/Loading";
+import Error from "../SharedModule/components/Error/Error";
 
 interface ProjectData {
   title: string;
@@ -59,7 +61,7 @@ const ProjectForm = () => {
 
   useEffect(() => {
     if (type === "Edit") getProject();
-  }, [type, getProject]);
+  }, [type]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     try {
@@ -108,9 +110,9 @@ const ProjectForm = () => {
 
       <div className="p-4">
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : error ? (
-          <p className="text-danger">{error}</p>
+          <Error message={error} />
         ) : (
           <form
             noValidate

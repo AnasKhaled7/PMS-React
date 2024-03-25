@@ -24,9 +24,10 @@ const DeleteModal = ({ id, getProjects }: Props) => {
       });
       toast.success("Project deleted successfully.");
       getProjects();
-      handleClose();
     } catch (error) {
       toast.error("An error occurred while deleting the project.");
+    } finally {
+      handleClose();
     }
   };
 

@@ -22,6 +22,10 @@
   color: var(--main-color);
 }
 
+.form-control::placeholder {
+  color: #fff;
+}
+
 .form-btn {
   background-color: var(--main-color);
 }

@@ -7,6 +7,8 @@ import { projectURLs } from "../lib/APIs";
 import DeleteModal from "./components/DeleteModal";
 import Pagination from "../SharedModule/components/Pagination/Pagination";
 import LocalSearch from "../SharedModule/components/LocalSearch/LocalSearch";
+import Loading from "../SharedModule/components/Loading/Loading";
+import Error from "../SharedModule/components/Error/Error";
 
 interface Project {
   id: string;
@@ -50,8 +52,12 @@ const Projects = () => {
   };
 
   useEffect(() => {
-    getProjects(pageNumber, 15, title);
-  }, [pageNumber, title]);
+    const getSearchData = setTimeout(() => {
+      getProjects(pageNumber, 15, title);
+    }, 500);
+
+    return () => clearTimeout(getSearchData);
+  }, [title, pageNumber]);
 
   return (
     <>
@@ -74,9 +80,9 @@ const Projects = () => {
         />
 
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : error ? (
-          <p>{error}</p>
+          <Error message={error} />
         ) : projects?.totalNumberOfRecords ? (
           <>
             <Table striped responsive className="text-center rounded-4">
