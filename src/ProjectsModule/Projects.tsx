@@ -1,14 +1,13 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { Link, useSearchParams } from "react-router-dom";
+import Error from "../SharedModule/components/Error/Error";
+import Loading from "../SharedModule/components/Loading/Loading";
+import LocalSearch from "../SharedModule/components/LocalSearch/LocalSearch";
+import Pagination from "../SharedModule/components/Pagination/Pagination";
 import { projectURLs } from "../lib/APIs";
 import DeleteModal from "./components/DeleteModal";
-import Pagination from "../SharedModule/components/Pagination/Pagination";
-import LocalSearch from "../SharedModule/components/LocalSearch/LocalSearch";
-import Loading from "../SharedModule/components/Loading/Loading";
-import Error from "../SharedModule/components/Error/Error";
 
 interface Project {
   id: string;
@@ -23,24 +22,30 @@ interface ProjectsResponse {
 }
 
 const Projects = () => {
-  const { token } = useContext(AuthContext);
+  const [searchParams, setSearchParams] = useSearchParams({
+    pageNumber: "1",
+    title: "",
+  });
+  const pageNumber = parseInt(searchParams.get("pageNumber") || "1");
+  const title = searchParams.get("title") || "";
 
   const [projects, setProjects] = useState<ProjectsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [pageNumber, setPageNumber] = useState(1);
-  const [title, setTitle] = useState("");
-
-  const getProjects = async (
-    pageNumber: number,
-    pageSize: number,
-    title: string
-  ) => {
+  const getProjects = async ({
+    pageNumber = 1,
+    pageSize = 15,
+    title,
+  }: {
+    pageNumber: number;
+    pageSize?: number;
+    title: string;
+  }) => {
     setIsLoading(true);
     try {
       const result = await axios.get<ProjectsResponse>(projectURLs.base, {
-        headers: { Authorization: token },
+        headers: { Authorization: localStorage.getItem("token") },
         params: { pageNumber, pageSize, title },
       });
       setProjects(result?.data);
@@ -53,7 +58,7 @@ const Projects = () => {
 
   useEffect(() => {
     const getSearchData = setTimeout(() => {
-      getProjects(pageNumber, 15, title);
+      getProjects({ pageNumber, title });
     }, 500);
 
     return () => clearTimeout(getSearchData);
@@ -73,10 +78,13 @@ const Projects = () => {
       <div className="p-4 d-flex flex-column gap-4">
         <LocalSearch
           placeholder="Search by Title"
-          onChange={(e) => {
-            setTitle(e.target.value);
-            setPageNumber(1);
-          }}
+          value={title}
+          onChange={(e) =>
+            setSearchParams(
+              { title: e.target.value, pageNumber: "1" },
+              { replace: true }
+            )
+          }
         />
 
         {isLoading ? (
@@ -113,7 +121,7 @@ const Projects = () => {
 
                       <DeleteModal
                         id={project?.id}
-                        getProjects={() => getProjects(pageNumber, 15, title)}
+                        getProjects={() => getProjects({ pageNumber, title })}
                       />
                     </td>
                   </tr>
@@ -123,7 +131,12 @@ const Projects = () => {
 
             <Pagination
               pageNumber={pageNumber}
-              setPageNumber={setPageNumber}
+              setPageNumber={(pageNumber: number) =>
+                setSearchParams(
+                  { title, pageNumber: pageNumber.toString() },
+                  { replace: true }
+                )
+              }
               totalNumberOfPages={projects.totalNumberOfPages}
             />
           </>

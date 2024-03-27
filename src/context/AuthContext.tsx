@@ -13,14 +13,16 @@ interface User {
 }
 
 interface AuthContextType {
-  token: string | null;
   userData: User | null;
+  token: string | null;
+  setToken: (token: string) => void;
   saveUserData: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  token: null,
   userData: null,
+  token: null,
+  setToken: () => {},
   saveUserData: () => {},
 });
 
@@ -30,7 +32,9 @@ type Props = {
 
 const AuthProvider = ({ children }: Props) => {
   const [userData, setUserData] = useState<User | null>(null);
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token") || null
+  );
 
   const saveUserData = () => {
     try {
@@ -39,8 +43,6 @@ const AuthProvider = ({ children }: Props) => {
         setUserData(decodedToken);
       }
     } catch (error) {
-      console.error("Invalid or missing token", error);
-      setUserData(null);
       toast.error("Invalid or missing token");
     }
   };
@@ -50,7 +52,7 @@ const AuthProvider = ({ children }: Props) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ token, userData, saveUserData }}>
+    <AuthContext.Provider value={{ userData, token, setToken, saveUserData }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,18 +1,15 @@
-import { useContext, useState } from "react";
-import { useForm, FieldError } from "react-hook-form";
+import axios from "axios";
+import { useState } from "react";
+import { FieldError, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
-import style from "./ChangPass.module.css";
 import logo from "../../../assets/images/PMS3.png";
-import { AuthContext } from "../../../context/AuthContext";
 import { userURLs } from "../../../lib/APIs";
 import { passwordValidation } from "../../../lib/InputValidator";
+import style from "./ChangPass.module.css";
 
 export default function ChangePass() {
   const navigate = useNavigate();
-
-  const { token } = useContext(AuthContext);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -43,7 +40,7 @@ export default function ChangePass() {
   const onSubmit = async (data: Inputs) => {
     try {
       await axios.put(userURLs.changePassAPI, data, {
-        headers: { Authorization: token },
+        headers: { Authorization: localStorage.getItem("token") },
       });
       toast.success("Password changed successfully");
       navigate("/dashboard");

@@ -2,10 +2,11 @@ import React from "react";
 
 interface Props {
   placeholder: string;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const LocalSearch = ({ placeholder, onChange }: Props) => {
+const LocalSearch = ({ placeholder, value, onChange }: Props) => {
   return (
     <div className="col-md-4">
       <div className="input-group">
@@ -17,6 +18,7 @@ const LocalSearch = ({ placeholder, onChange }: Props) => {
           className="form-control"
           placeholder={placeholder}
           onChange={onChange}
+          value={value}
         />
       </div>
     </div>

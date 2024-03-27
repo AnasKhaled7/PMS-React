@@ -1,9 +1,8 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { projectURLs } from "../../lib/APIs";
-import { AuthContext } from "../../context/AuthContext";
 
 interface Props {
   id: string;
@@ -11,23 +10,25 @@ interface Props {
 }
 
 const DeleteModal = ({ id, getProjects }: Props) => {
-  const { token } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const deleteProject = async (projectId: string) => {
+    setIsLoading(true);
     try {
       await axios.delete(`${projectURLs.base}/${projectId}`, {
-        headers: { Authorization: token },
+        headers: { Authorization: localStorage.getItem("token") },
       });
       toast.success("Project deleted successfully.");
+      handleClose();
       getProjects();
     } catch (error) {
       toast.error("An error occurred while deleting the project.");
     } finally {
-      handleClose();
+      setIsLoading(false);
     }
   };
 
@@ -63,8 +64,12 @@ const DeleteModal = ({ id, getProjects }: Props) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={() => deleteProject(id)}>
-            Delete
+          <Button
+            variant="danger"
+            disabled={isLoading}
+            onClick={() => deleteProject(id)}
+          >
+            {isLoading ? "Deleting..." : "Delete"}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -15,7 +15,7 @@ import { userURLs } from "../../../lib/APIs";
 export default function Login() {
   const navigate = useNavigate();
 
-  const { saveUserData } = useContext(AuthContext);
+  const { saveUserData, setToken } = useContext(AuthContext);
 
   const [showPass, setShowPass] = useState(false);
   const showPassHandler = () => setShowPass(!showPass);
@@ -35,6 +35,7 @@ export default function Login() {
     try {
       const result = await axios.post(userURLs.loginAPI, data);
       localStorage.setItem("token", result?.data?.token);
+      setToken(result?.data?.token);
       saveUserData();
       toast.success("Logged in successfully");
       navigate("/dashboard");
@@ -72,16 +73,15 @@ export default function Login() {
                     {...register("email", emailValidation)}
                   />
                 </div>
-                <div className="w-100">
-                  {errors.email && (
-                    <div
-                      className="alert alert-danger py-1"
-                      aria-live="assertive"
-                    >
-                      {(errors.email as FieldError).message}
-                    </div>
-                  )}
-                </div>
+                
+                {errors.email && (
+                  <div
+                    className="alert alert-danger py-1"
+                    aria-live="assertive"
+                  >
+                    {(errors.email as FieldError).message}
+                  </div>
+                )}
 
                 {/* password input */}
                 <label htmlFor="password" className="form-label mb-0">
@@ -108,16 +108,15 @@ export default function Login() {
                     ></i>
                   </span>
                 </div>
-                <div className="w-100">
-                  {errors.password && (
-                    <div
-                      className="alert alert-danger py-1"
-                      aria-live="assertive"
-                    >
-                      {(errors.password as FieldError).message}
-                    </div>
-                  )}
-                </div>
+
+                {errors.password && (
+                  <div
+                    className="alert alert-danger py-1"
+                    aria-live="assertive"
+                  >
+                    {(errors.password as FieldError).message}
+                  </div>
+                )}
 
                 {/* links */}
                 <div className="d-flex justify-content-between">

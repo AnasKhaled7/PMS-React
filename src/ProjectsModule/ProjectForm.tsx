@@ -1,12 +1,11 @@
 import axios from "axios";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FieldError, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../context/AuthContext";
-import { projectURLs } from "../lib/APIs";
-import Loading from "../SharedModule/components/Loading/Loading";
 import Error from "../SharedModule/components/Error/Error";
+import Loading from "../SharedModule/components/Loading/Loading";
+import { projectURLs } from "../lib/APIs";
 
 interface ProjectData {
   title: string;
@@ -15,7 +14,6 @@ interface ProjectData {
 }
 
 const ProjectForm = () => {
-  const { token } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -47,7 +45,7 @@ const ProjectForm = () => {
     try {
       const projectId = location.pathname.split("/").pop();
       const result = await axios.get(`${projectURLs.base}/${projectId}`, {
-        headers: { Authorization: token },
+        headers: { Authorization: localStorage.getItem("token") },
       });
       setProject(result.data);
     } catch (error) {
@@ -57,7 +55,7 @@ const ProjectForm = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [location, token]);
+  }, [location]);
 
   useEffect(() => {
     if (type === "Edit") getProject();
@@ -67,13 +65,13 @@ const ProjectForm = () => {
     try {
       if (type === "Add") {
         await axios.post(projectURLs.base, data, {
-          headers: { Authorization: token },
+          headers: { Authorization: localStorage.getItem("token") },
         });
         toast.success("Project added successfully.");
         navigate("/dashboard/projects");
       } else if (type === "Edit") {
         await axios.put(`${projectURLs.base}/${project?.id}`, data, {
-          headers: { Authorization: token },
+          headers: { Authorization: localStorage.getItem("token") },
         });
         toast.success("Project updated successfully.");
         navigate("/dashboard/projects");
