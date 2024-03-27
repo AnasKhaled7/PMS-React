@@ -49,8 +49,8 @@ const Projects = () => {
         params: { pageNumber, pageSize, title },
       });
       setProjects(result?.data);
-    } catch (error) {
-      setError("An error occurred while fetching projects. Please try again.");
+    } catch (error: any) {
+      setError(error?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
