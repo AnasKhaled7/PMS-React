@@ -7,7 +7,7 @@ export default function MasterLayout() {
     <main className="min-vh-100 d-flex flex-column">
       <Navbar />
 
-      <div className="d-flex gap-2 flex-grow-1">
+      <div className="d-flex flex-grow-1 bg-body-secondary">
         <SideBar />
 
         <div className="w-100">
